@@ -21,9 +21,10 @@ defmodule Uniris.DB.CassandraImpl do
   @doc """
   Initialize the connection pool and start the migrations
   """
+  # TODO: MOVE CASSANDRA ENDPOINT INTO CONFIG
   @spec start_link(Keyword.t()) :: {:ok, pid()}
   def start_link(opts \\ []) do
-    nodes = Keyword.get(opts, :nodes, ["127.0.0.1:9042"])
+    nodes = Keyword.get(opts, :nodes, ["192.168.64.6:31300"])
 
     {:ok, pid} =
       Xandra.start_link(

@@ -51,4 +51,53 @@ defmodule UnirisWeb.Endpoint do
   plug(Plug.Session, @session_options)
   plug(CORSPlug, origin: "*")
   plug(UnirisWeb.Router)
+
+  def init(_key, config) do
+    if config[:load_from_system_env] do
+      host =
+        System.get_env("HOSTNAME") ||
+          raise("expected the HOSTNAME environment variable to be set")
+
+      port =
+        System.get_env("REST_PORT") ||
+          raise("expected the REST_PORT environment variable to be set")
+
+      port =
+        port
+        |> String.to_integer()
+
+      tls_port =
+        System.get_env("REST_TLS_PORT") ||
+          raise("expected the REST_TLS_PORT environment variable to be set")
+
+      tls_port =
+        tls_port
+        |> String.to_integer()
+
+      tls_key =
+        System.get_env("UNIRIS_WEB_SSL_KEY_PATH") ||
+          raise("expected the UNIRIS_WEB_SSL_KEY_PATH environment variable to be set")
+
+      tls_cert =
+        System.get_env("UNIRIS_WEB_SSL_CERT_PATH") ||
+          raise("expected the UNIRIS_WEB_SSL_CERT_PATH environment variable to be set")
+
+      config =
+        config
+        |> Keyword.put(:http, port: port)
+        |> Keyword.put(:url,
+          host: host,
+          port: tls_port
+        )
+        |> Keyword.put(:https,
+          port: tls_port,
+          keyfile: tls_key,
+          certfile: tls_cert
+        )
+
+      {:ok, config}
+    else
+      {:ok, config}
+    end
+  end
 end

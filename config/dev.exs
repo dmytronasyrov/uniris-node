@@ -98,6 +98,9 @@ config :uniris, Uniris.SharedSecrets.NodeRenewalScheduler,
   # Trigger it 20 seconds before
   trigger_offset: 20
 
+config :uniris, Uniris.P2P.Endpoint,
+  port: System.get_env("UNIRIS_P2P_PORT", "3002") |> String.to_integer()
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
@@ -105,6 +108,7 @@ config :uniris, Uniris.SharedSecrets.NodeRenewalScheduler,
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
 config :uniris, UnirisWeb.Endpoint,
+  load_from_system_env: false,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,

@@ -56,7 +56,8 @@ if [ $UPGRADE == 1 ]
 then
     # Build upgrade releases
     echo "Build the upgrade release"
-    mix distillery.release --upgrade
+    # mix distillery.release --upgrade
+    mix distillery.release --env=prod --upgrade
 
     echo "Copy upgraded release into ${INSTALL_DIR}/mainnet/releases/${VERSION}"
     echo "Copy upgraded release into ${INSTALL_DIR}/testnet/releases/${VERSION}"
@@ -71,7 +72,7 @@ else
     # Build the releases
 
     echo "Generate release"
-    mix distillery.release
+    mix distillery.release --env=prod
 
     echo "Install MainNet release"
     echo "Copy release into ${INSTALL_DIR}/mainnet"

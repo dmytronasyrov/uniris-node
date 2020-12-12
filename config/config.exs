@@ -7,10 +7,10 @@ config :git_hooks,
     pre_commit: [
       tasks: [
         "mix format",
-        "mix clean",
-        "mix compile --warnings-as-errors",
-        "mix credo --strict",
-        "mix test --trace"
+        "mix clean"
+        # "mix compile --warnings-as-errors",
+        # "mix credo --strict",
+        # "mix test --trace"
       ]
     ]
   ]
@@ -55,7 +55,6 @@ config :uniris, Uniris.Bootstrap.NetworkInit,
 config :uniris, Uniris.P2P.BootstrappingSeeds, file: "priv/p2p/seeds"
 
 config :uniris, Uniris.P2P.Endpoint,
-  port: System.get_env("UNIRIS_P2P_PORT", "3002") |> String.to_integer(),
   nb_acceptors: 10,
   transport: :tcp
 

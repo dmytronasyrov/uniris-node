@@ -1,0 +1,28 @@
+-name <%= release_name %>-${NODENAME}@${HOSTNAME}
+-setcookie <%= release.profile.cookie %>
+
+-env ERL_MAX_PORTS 1000000
+-env ERL_FULLSWEEP_AFTER 10
+-env RUN_ERL_LOG_MAXSIZE 10000000
+
++K true
++A 32
++P 1000000
++MIscs 2048
+# +S 2:2
+## +zdbbl 8192
+
+-heart 
+-env HEART_BEAT_TIMEOUT 30
+
+-smp auto
+
+-start_epmd false
+
+# -kernel pidfile '"etc/server.pid"'
+
+# -config etc/erl.config
+
+# -gproc gproc_dist all
+
++pc unicode

@@ -12,8 +12,13 @@ defmodule Uniris.P2P.Endpoint do
     GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
 
+  @impl true
   def init(args) do
-    port = Keyword.get(args, :port)
+    port =
+      System.get_env("UNIRIS_P2P_PORT")
+      |> String.to_integer() ||
+        raise("expected the UNIRIS_P2P_PORT environment variable to be set")
+
     transport = Keyword.get(args, :transport)
     nb_acceptors = Keyword.get(args, :nb_acceptors)
 
@@ -34,6 +39,7 @@ defmodule Uniris.P2P.Endpoint do
      }}
   end
 
+  @impl true
   def handle_info(
         {:DOWN, _ref, :process, pid, reason},
         state = %{

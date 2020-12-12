@@ -97,6 +97,8 @@ defmodule Uniris.Bootstrap.Sync do
   Fetch and load the nodes list
   """
   @spec load_node_list(Node.t()) :: :ok
+  def load_node_list(nil), do: :ok
+
   def load_node_list(node = %Node{}) do
     %NodeList{nodes: nodes} = P2P.send_message(node, %ListNodes{})
     Enum.each(nodes, &P2P.add_node/1)
@@ -106,7 +108,9 @@ defmodule Uniris.Bootstrap.Sync do
   @doc """
   Fetch and load the storage nonce
   """
-  @spec load_storage_nonce(Node.t()) :: :ok
+  @spec load_storage_nonce(Node.t() | nil) :: :ok
+  def load_storage_nonce(nil), do: :ok
+
   def load_storage_nonce(node = %Node{}) do
     message = %GetStorageNonce{public_key: Crypto.node_public_key()}
 
@@ -126,6 +130,8 @@ defmodule Uniris.Bootstrap.Sync do
   Returns the closest nodes
   """
   @spec get_closest_nodes_and_renew_seeds(list(Node.t()), binary()) :: list(Node.t())
+  def get_closest_nodes_and_renew_seeds(bootstrapping_seeds, patch), do: []
+
   def get_closest_nodes_and_renew_seeds(bootstrapping_seeds, patch) do
     %BootstrappingNodes{closest_nodes: closest_nodes, new_seeds: new_seeds} =
       bootstrapping_seeds
