@@ -224,7 +224,14 @@ defmodule Uniris.Crypto do
     true
   """
   @spec node_public_key(index :: number()) :: Uniris.Crypto.key()
-  defdelegate node_public_key(index), to: Keystore
+  # defdelegate node_public_key(index), to: Keystore
+  def node_public_key(index) do
+    seed = get_crypto_seed()
+    IO.puts "QQQQ SEED: #{inspect seed}"
+    {pub, _} = derive_keypair(seed, index)
+    IO.puts "QQQQ PUB: #{inspect seed}"
+    pub
+  end
 
   @doc """
   Return the the node shared secrets public key using the node shared secret transaction seed
@@ -635,6 +642,19 @@ defmodule Uniris.Crypto do
   def hash_size(2), do: 32
   def hash_size(3), do: 64
   def hash_size(4), do: 64
+
+  @spec get_crypto_seed :: binary
+  def get_crypto_seed do
+    keystore_impl = Application.get_env(:uniris, Keystore)
+    |> Keyword.fetch!(:impl)
+    config = Application.get_env(:uniris, keystore_impl)
+
+    Keyword.fetch!(config, :load_from_system_env)
+    |> case do
+      true -> System.get_env("UNIRIS_CRYPTO_SEED") || raise "UNIRIS_CRYPTO_SEED env variable must be set"
+      false -> Keyword.fetch!(config, :crypto_seed)
+    end
+  end
 
   @doc """
   Load the transaction for the Keystore indexing

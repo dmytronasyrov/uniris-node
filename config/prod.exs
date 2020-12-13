@@ -7,6 +7,9 @@ config :uniris, Uniris.Networking,
 
 config :uniris, Uniris.P2P,
   load_from_system_env: true
+
+config :uniris, Uniris.Crypto.SoftwareKeystore,
+  load_from_system_env: true
   
 # Do not print debug messages in production
 config :logger, level: :info

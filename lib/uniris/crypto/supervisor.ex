@@ -9,21 +9,20 @@ defmodule Uniris.Crypto.Supervisor do
 
   alias Uniris.Utils
 
-  def start_link(args) do
-    Supervisor.start_link(__MODULE__, args, name: Uniris.CryptoSupervisor)
+  def start_link(_) do
+    Supervisor.start_link(__MODULE__, [], name: Uniris.CryptoSupervisor)
   end
 
-  def init(_args) do
+  def init(_) do
+    seed = Uniris.Crypto.get_crypto_seed()
     load_storage_nonce()
 
-    optional_children = [keystore_child_spec(), KeystoreLoader]
+    optional_children = [
+      {Keystore, [seed: seed]},
+      KeystoreLoader
+    ]
     children = [LibSodiumPort | Utils.configurable_children(optional_children)]
     Supervisor.init(children, strategy: :rest_for_one)
-  end
-
-  defp keystore_child_spec do
-    keystore_impl = Application.get_env(:uniris, Keystore)[:impl]
-    {Keystore, Application.get_env(:uniris, keystore_impl)}
   end
 
   defp load_storage_nonce do
@@ -31,11 +30,8 @@ defmodule Uniris.Crypto.Supervisor do
     abs_filepath = Application.app_dir(:uniris, rel_filepath)
 
     case File.read(abs_filepath) do
-      {:ok, storage_nonce} ->
-        :persistent_term.put(:storage_nonce, storage_nonce)
-
-      _ ->
-        :ok
+      {:ok, storage_nonce} -> :persistent_term.put(:storage_nonce, storage_nonce)
+      _ -> :ok
     end
   end
 end

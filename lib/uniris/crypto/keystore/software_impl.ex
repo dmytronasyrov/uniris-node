@@ -10,13 +10,12 @@ defmodule Uniris.Crypto.SoftwareKeystore do
 
   @behaviour KeystoreImpl
 
-  def start_link(opts \\ []) do
-    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+  def start_link([seed: _] = args) do
+    GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
 
   @impl GenServer
-  def init(opts) do
-    seed = Keyword.get(opts, :seed)
+  def init(seed: seed) do
     {:ok, %{node_seed: seed, node_key_counter: 0, node_shared_key_counter: 0}}
   end
 

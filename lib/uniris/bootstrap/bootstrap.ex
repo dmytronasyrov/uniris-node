@@ -42,15 +42,18 @@ defmodule Uniris.Bootstrap do
   Hence others nodes will be able to communicate with and support new transactions.
   """
   @spec run(:inet.ip_address(), :inet.port_number(), list(Node.t()), DateTime.t()) :: :ok
-  def run(ip = {_, _, _, _}, port, bootstrapping_seeds, last_sync_date = %DateTime{})
-      when is_number(port) and is_list(bootstrapping_seeds) do
+  def run(ip, port, bootstrapping_seeds, last_sync_date) do
     IO.puts "INIT BOOTSTRAP: #{inspect ip}:#{inspect port}"
-    if should_bootstrap?(ip, port, last_sync_date) do
-      IO.puts "SHOULD BOOTSTRAPPED"
-      start_bootstrap(ip, port, bootstrapping_seeds, last_sync_date)
-    else
-      IO.puts "DON'T BOOTSTRAP"
-      P2P.set_node_globally_available(Crypto.node_public_key(0))
+
+    should_bootstrap?(ip, port, last_sync_date)
+    |> case do
+      true -> 
+        IO.puts "SHOULD BOOTSTRAP"
+        start_bootstrap(ip, port, bootstrapping_seeds, last_sync_date)
+
+      false -> 
+        IO.puts "SHOULD NOT BOOTSTRAP"
+        P2P.set_node_globally_available(Crypto.node_public_key(0))
     end
   end
 

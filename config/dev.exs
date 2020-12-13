@@ -9,6 +9,10 @@ config :uniris, Uniris.Networking,
 config :uniris, Uniris.P2P,
   load_from_system_env: false,
   seeds_file: "priv/p2p/seeds"
+
+config :uniris, Uniris.Crypto.SoftwareKeystore,
+  load_from_system_env: false,
+  crypto_seed: "node1"
   
 # config :logger, handle_sasl_reports: true
 
@@ -60,13 +64,10 @@ config :uniris, Uniris.Bootstrap.NetworkInit,
 
 config :uniris, Uniris.Crypto.Keystore, impl: Uniris.Crypto.SoftwareKeystore
 
-config :uniris, Uniris.Crypto.SoftwareKeystore,
-  seed: System.get_env("UNIRIS_CRYPTO_SEED", "node1")
-
 config :uniris, Uniris.DB, impl: Uniris.DB.KeyValueImpl
 
 config :uniris, Uniris.DB.KeyValueImpl,
-  root_dir: "priv/storage/#{System.get_env("UNIRIS_CRYPTO_SEED", "node1")}"
+  root_dir: "priv/storage/node1}"
 
 config :uniris, Uniris.Governance.Pools,
   initial_members: [
@@ -79,7 +80,7 @@ config :uniris, Uniris.Governance.Pools,
 config :uniris, Uniris.SelfRepair.Scheduler, interval: "0 * * * * * *"
 
 config :uniris, Uniris.SelfRepair.Sync,
-  last_sync_file: "priv/p2p/last_sync_#{System.get_env("UNIRIS_CRYPTO_SEED")}",
+  last_sync_file: "priv/p2p/last_sync_node1}",
   network_startup_date: %DateTime{
     year: DateTime.utc_now().year,
     month: DateTime.utc_now().month,
