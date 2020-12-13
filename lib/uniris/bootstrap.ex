@@ -3,7 +3,7 @@ defmodule Uniris.Bootstrap do
   Manage Uniris Node Bootstrapping
   """
 
-  alias __MODULE__.IPLookup
+  alias Uniris.Networking.IPLookup
   alias __MODULE__.NetworkInit
   alias __MODULE__.Sync
   alias __MODULE__.TransactionHandler
@@ -27,7 +27,7 @@ defmodule Uniris.Bootstrap do
   """
   @spec start_link(list()) :: {:ok, pid()}
   def start_link(_args \\ []) do
-    ip = IPLookup.get_ip()
+    {:ok, ip} = IPLookup.get_ip()
     port = Application.get_env(:uniris, P2PEndpoint)[:port]
     last_sync_date = SelfRepair.last_sync_date()
     bootstrapping_seeds = P2P.list_bootstrapping_seeds()
@@ -51,9 +51,12 @@ defmodule Uniris.Bootstrap do
   @spec run(:inet.ip_address(), :inet.port_number(), list(Node.t()), DateTime.t()) :: :ok
   def run(ip = {_, _, _, _}, port, bootstrapping_seeds, last_sync_date = %DateTime{})
       when is_number(port) and is_list(bootstrapping_seeds) do
+    IO.puts "INIT BOOTSTRAP: #{inspect ip}:#{inspect port}"
     if should_bootstrap?(ip, port, last_sync_date) do
+      IO.puts "SHOULD BOOTSTRAPPED"
       start_bootstrap(ip, port, bootstrapping_seeds, last_sync_date)
     else
+      IO.puts "DON'T BOOTSTRAP"
       P2P.set_node_globally_available(Crypto.node_public_key(0))
     end
   end
@@ -62,6 +65,7 @@ defmodule Uniris.Bootstrap do
     already_bootstrapped? = match?({:ok, _}, P2P.get_node_info(Crypto.node_public_key(0)))
 
     if already_bootstrapped? do
+      IO.puts "ALREADY BOOTSTRAPPED"
       Sync.require_update?(ip, port, last_sync_date)
     else
       true
@@ -74,12 +78,13 @@ defmodule Uniris.Bootstrap do
     patch = P2P.get_geo_patch(ip)
 
     if Sync.should_initialize_network?(bootstrapping_seeds) do
+      IO.puts "SHOULD INIT NETWORK"
       Sync.initialize_network(ip, port)
       SelfRepair.put_last_sync_date(DateTime.utc_now())
       :ok = SelfRepair.start_scheduler(patch)
     else
+      IO.puts "SHOULD NOT INIT NETWORK"
       if Crypto.number_of_node_keys() == 0 do
-        Logger.info("Node initialization...")
         first_initialization(ip, port, patch, bootstrapping_seeds)
       else
         if Sync.require_update?(ip, port, last_sync_date) do
@@ -95,11 +100,15 @@ defmodule Uniris.Bootstrap do
   end
 
   defp first_initialization(ip, port, patch, bootstrapping_seeds) do
-    closest_node =
-      bootstrapping_seeds
-      |> Sync.get_closest_nodes_and_renew_seeds(patch)
-      |> List.first()
+    Logger.info "Node initialization: #{inspect ip}:#{inspect port}"
+    IO.puts "AAAAAA: #{inspect patch}"
+    IO.puts "BBBBBB: #{inspect bootstrapping_seeds}"
 
+    closest_node = bootstrapping_seeds
+    |> Sync.get_closest_nodes_and_renew_seeds(patch)
+    |> List.first()
+
+    IO.puts "CCCCCC: #{inspect closest_node}"
     tx = TransactionHandler.create_node_transaction(ip, port)
 
     ack_task = Task.async(fn -> TransactionHandler.await_validation(tx.address, closest_node) end)

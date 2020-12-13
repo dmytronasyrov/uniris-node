@@ -14,7 +14,8 @@ config :uniris, Uniris.BeaconChain.SlotTimer,
   # Trigger it 5 seconds before
   trigger_offset: 5
 
-config :uniris, Uniris.Bootstrap, ip_lookup_provider: Uniris.Bootstrap.IPLookup.EnvImpl
+config :uniris, Uniris.Networking, ip_lookup_provider: Uniris.Networking.IPLookup.EnvImpl
+
 config :uniris, Uniris.Bootstrap.Sync, out_of_sync_date_threshold: 60
 
 config :uniris, Uniris.P2P.BootstrappingSeeds,

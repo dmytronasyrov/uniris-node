@@ -144,6 +144,7 @@ defmodule Uniris.Bootstrap.NetworkInit do
   end
 
   def self_validation!(tx = %Transaction{}, unspent_outputs \\ []) do
+    IO.puts "SELF-VALIDATE TX: #{inspect tx}"
     unless Mining.accept_transaction?(tx) do
       raise "Invalid transaction"
     end

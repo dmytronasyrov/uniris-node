@@ -3,9 +3,11 @@ use Mix.Config
 # Do not print debug messages in production
 config :logger, level: :info
 
-config :uniris, Uniris.Bootstrap, ip_lookup_provider: Uniris.Bootstrap.IPLookup.IPFYImpl
-# 15 days
-config :uniris, Uniris.Bootstrap.Sync, out_of_sync_date_threshold: 54_000
+# config :uniris, Uniris.Networking, ip_lookup_provider: Uniris.Networking.IPLookup.IPIFYImpl
+config :uniris, Uniris.Networking, ip_lookup_provider: Uniris.Networking.IPLookup.EnvImpl
+
+# config :uniris, Uniris.Bootstrap.Sync, out_of_sync_date_threshold: 54_000 # 15 days
+config :uniris, Uniris.Bootstrap.Sync, out_of_sync_date_threshold: 60
 
 config :uniris, Uniris.Bootstrap.NetworkInit,
   # TODO: provide the true addresses for the genesis UCO distribution

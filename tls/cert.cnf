@@ -31,3 +31,4 @@ issuerAltName          = issuer:copy
 DNS.1 = localhost
 IP.1 = 0.0.0.0
 IP.2 = 127.0.0.1
+IP.3 = 95.158.39.202

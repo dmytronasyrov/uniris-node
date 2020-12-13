@@ -21,4 +21,4 @@ config :uniris, Uniris.P2P.BootstrappingSeeds,
 config :uniris, Uniris.DB, impl: Uniris.DB.KeyValueImpl
 
 config :uniris, Uniris.Bootstrap,
-  ip_lookup_provider: Uniris.Bootstrap.IPLookup.EnvImpl
+  ip_lookup_provider: Uniris.Networking.IPLookup.EnvImpl

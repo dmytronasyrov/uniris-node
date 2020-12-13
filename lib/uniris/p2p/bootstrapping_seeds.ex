@@ -99,7 +99,7 @@ defmodule Uniris.P2P.BootstrappingSeeds do
     |> Enum.map(fn seed ->
       [ip, port, public_key] = String.split(seed, ":")
       {:ok, ip} = ip |> String.to_charlist() |> :inet.parse_address()
-
+      
       %Node{
         ip: ip,
         port: String.to_integer(port),

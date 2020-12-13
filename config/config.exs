@@ -1,19 +1,19 @@
 use Mix.Config
 
-config :git_hooks,
-  auto_install: true,
-  verbose: true,
-  hooks: [
-    pre_commit: [
-      tasks: [
-        "mix format",
-        "mix clean"
-        # "mix compile --warnings-as-errors",
-        # "mix credo --strict",
-        # "mix test --trace"
-      ]
-    ]
-  ]
+# config :git_hooks,
+#   auto_install: true,
+#   verbose: true,
+#   hooks: [
+#     pre_commit: [
+#       tasks: [
+#         "mix format",
+#         "mix clean"
+#         "mix compile --warnings-as-errors",
+#         "mix credo --strict",
+#         "mix test --trace"
+#       ]
+#     ]
+#   ]
 
 # Configures Elixir's Logger
 config :logger, :console,

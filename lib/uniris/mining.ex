@@ -93,39 +93,40 @@ defmodule Uniris.Mining do
   @spec accept_transaction?(Transaction.t()) :: boolean()
   def accept_transaction?(tx = %Transaction{}) do
     if Transaction.verify_previous_signature?(tx) do
+      IO.puts "ACCEPT TRANSACTION? : PREV VERIFIED"
       do_accept_transaction?(tx)
     else
+      IO.puts "ACCEPT TRANSACTION? : PREV NOT VERIFIED"
       false
     end
   end
 
-  defp do_accept_transaction?(%Transaction{
-         type: :node,
-         data: %TransactionData{content: content}
-       }) do
-    Regex.match?(~r/(?<=ip:|port:).*/m, content)
+  defp do_accept_transaction?(%Transaction{type: :node, data: %TransactionData{content: content}}) do
+    accept = Regex.match?(~r/(?<=ip:|port:).*/m, content)
+    IO.puts "DO ACCEPT TRANSACTION? 1: #{content}"
+    IO.puts "DO ACCEPT TRANSACTION? 1: #{accept}"
+    accept
   end
 
-  defp do_accept_transaction?(%Transaction{
-         type: :node_shared_secrets,
-         data: %TransactionData{
-           keys: keys = %Keys{secret: secret, authorized_keys: authorized_keys}
-         },
-         previous_public_key: previous_public_key
-       })
-       when is_binary(secret) and byte_size(secret) > 0 and map_size(authorized_keys) > 0 do
-    nodes = P2P.list_nodes()
+  defp do_accept_transaction?(%Transaction{type: :node_shared_secrets, data: data, previous_public_key: previous_public_key}) do
+    # when is_binary(secret) and byte_size(secret) > 0 and map_size(authorized_keys) > 0
+    %TransactionData{keys: keys} = data
+    %Keys{secret: secret, authorized_keys: authorized_keys} = keys
+    IO.puts "DO ACCEPT TRANSACTION? 2: #{inspect secret}"
+    IO.puts "DO ACCEPT TRANSACTION? 2: #{inspect authorized_keys}"
 
-    last_tx =
-      Enum.at(TransactionChain.list_transactions_by_type(:node_shared_secrets, [:address]), 0)
+    nodes = P2P.list_nodes()
+    IO.puts "DO ACCEPT TRANSACTION? 2: Nodes: #{inspect nodes}"
+    last_tx = Enum.at(TransactionChain.list_transactions_by_type(:node_shared_secrets, [:address]), 0)
+    IO.puts "DO ACCEPT TRANSACTION? 2: Last TX: #{inspect last_tx}"
 
     case last_tx do
-      nil ->
-        Enum.all?(Keys.list_authorized_keys(keys), &Utils.key_in_node_list?(nodes, &1))
-
-      %Transaction{address: prev_address} ->
-        Crypto.hash(previous_public_key) == prev_address &&
-          Enum.all?(Keys.list_authorized_keys(keys), &Utils.key_in_node_list?(nodes, &1))
+      nil -> Enum.all?(Keys.list_authorized_keys(keys), &Utils.key_in_node_list?(nodes, &1))
+      %Transaction{address: prev_address} -> 
+        IO.puts "AAA: #{inspect Base.encode16(Crypto.hash(previous_public_key))}"
+        IO.puts "BBB: #{inspect Base.encode16(prev_address)}"
+        IO.puts "CCC: #{inspect Enum.all?(Keys.list_authorized_keys(keys), &Utils.key_in_node_list?(nodes, &1))}"
+        Crypto.hash(previous_public_key) == prev_address && Enum.all?(Keys.list_authorized_keys(keys), &Utils.key_in_node_list?(nodes, &1))
     end
   end
 

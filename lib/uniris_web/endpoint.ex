@@ -54,13 +54,11 @@ defmodule UnirisWeb.Endpoint do
 
   def init(_key, config) do
     if config[:load_from_system_env] do
-      host =
-        System.get_env("HOSTNAME") ||
-          raise("expected the HOSTNAME environment variable to be set")
+      host = System.get_env("HOSTNAME") 
+      || raise "expected the HOSTNAME environment variable to be set"
 
-      port =
-        System.get_env("REST_PORT") ||
-          raise("expected the REST_PORT environment variable to be set")
+      port = System.get_env("REST_PORT") 
+      || raise "expected the REST_PORT environment variable to be set"
 
       port =
         port

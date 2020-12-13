@@ -15,9 +15,7 @@ defmodule Uniris.Bootstrap.TransactionHandler do
   @doc """
   Send a transaction to the network towards a welcome node
   """
-  @spec send_transaction(Transaction.t(), Node.t() | nil) :: :ok | {:error, :network_issue}
-  def send_transaction(tx = %Transaction{}, nil), do: :ok
-
+  @spec send_transaction(Transaction.t(), Node.t()) :: :ok | {:error, :network_issue}
   def send_transaction(tx = %Transaction{}, node = %Node{}) do
     message = %NewTransaction{transaction: tx}
     %Ok{} = P2P.send_message(node, message)
@@ -44,9 +42,7 @@ defmodule Uniris.Bootstrap.TransactionHandler do
   @doc """
   Await the validation a given transaction address
   """
-  @spec await_validation(binary(), Node.t() | nil) :: :ok | {:error, :network_issue}
-  def await_validation(address, nil) when is_binary(address), do: :ok
-
+  @spec await_validation(binary(), Node.t()) :: :ok | {:error, :network_issue}
   def await_validation(address, node = %Node{}) when is_binary(address) do
     message = %SubscribeTransactionValidation{address: address}
     %Ok{} = P2P.send_message(node, message)
