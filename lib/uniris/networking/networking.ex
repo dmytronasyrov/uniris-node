@@ -13,7 +13,11 @@ defmodule Uniris.Networking do
     Application.get_env(:uniris, Uniris.Networking)
     |> Keyword.fetch!(:load_from_system_env)
     |> case do
-      true -> {:ok, System.get_env("UNIRIS_P2P_PORT")}
+      true -> 
+        {port, ""} = System.get_env("UNIRIS_P2P_PORT")
+        |> Integer.parse
+        
+        {:ok, port}
       false -> 
         Application.get_env(:uniris, Uniris.Networking)
         |> Keyword.fetch(:port)

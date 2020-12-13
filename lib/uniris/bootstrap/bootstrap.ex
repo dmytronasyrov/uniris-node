@@ -10,7 +10,6 @@ defmodule Uniris.Bootstrap do
   alias Uniris.Crypto
 
   alias Uniris.P2P
-  alias Uniris.P2P.Endpoint, as: P2PEndpoint
 
   alias Uniris.SelfRepair
 
@@ -25,11 +24,7 @@ defmodule Uniris.Bootstrap do
   Start the bootstrapping as a task
   """
   @spec start_link(list()) :: {:ok, pid()}
-  def start_link(ip: ip, port: port) do
-    IO.puts "AAAAA ARGS: #{inspect ip}   #{inspect port}"
-    last_sync_date = SelfRepair.last_sync_date()
-    bootstrapping_seeds = P2P.list_bootstrapping_seeds()
-
+  def start_link(ip: ip, port: port, bootstrapping_seeds: bootstrapping_seeds, last_sync_date: last_sync_date) do
     Task.start_link(__MODULE__, :run, [ip, port, bootstrapping_seeds, last_sync_date])
   end
 

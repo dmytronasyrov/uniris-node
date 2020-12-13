@@ -36,8 +36,7 @@ defmodule Uniris.P2P do
     - `local`: Node discovered and available from the last exchange
   - `authorized?`: if `true`, take only the authorized nodes
   """
-  @spec list_nodes(opts :: [availability: :global | :local, authorized?: boolean()]) ::
-          list(Node.t())
+  @spec list_nodes(opts :: [availability: :global | :local, authorized?: boolean()]) :: list(Node.t())
   defdelegate list_nodes(opts \\ []), to: MemTable
 
   @doc """

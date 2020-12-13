@@ -8,20 +8,12 @@ defmodule Uniris.P2P.Endpoint do
 
   require Logger
 
-  def start_link(args) do
+  def start_link([nb_acceptors: _, transport: _, port: _] = args) do
     GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
 
   @impl true
-  def init(args) do
-    port =
-      System.get_env("UNIRIS_P2P_PORT")
-      |> String.to_integer() ||
-        raise("expected the UNIRIS_P2P_PORT environment variable to be set")
-
-    transport = Keyword.get(args, :transport)
-    nb_acceptors = Keyword.get(args, :nb_acceptors)
-
+  def init([nb_acceptors: nb_acceptors, transport: transport, port: port] = args) do
     {:ok, listen_socket} = Transport.listen(transport, port)
 
     Logger.info("P2P #{transport} Endpoint running on port #{port}")

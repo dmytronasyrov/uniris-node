@@ -8,11 +8,11 @@ defmodule Uniris.SelfRepair.Supervisor do
 
   alias Uniris.Utils
 
-  def start_link(arg) do
-    Supervisor.start_link(__MODULE__, arg, name: __MODULE__)
+  def start_link(args) do
+    Supervisor.start_link(__MODULE__, args, name: __MODULE__)
   end
 
-  def init(_arg) do
+  def init(_) do
     init_last_sync_file()
 
     children = [

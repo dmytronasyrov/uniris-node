@@ -1,5 +1,15 @@
 use Mix.Config
 
+config :uniris, Uniris.Networking, 
+  load_from_system_env: false,
+  ip_lookup_provider: Uniris.Networking.IPLookup.EnvImpl,
+  hostname: "127.0.0.1",
+  port: 3002
+
+config :uniris, Uniris.P2P,
+  load_from_system_env: false,
+  seeds_file: "priv/p2p/seeds"
+  
 # config :logger, handle_sasl_reports: true
 
 # Set a higher stacktrace during development. Avoid configuring such
@@ -14,20 +24,7 @@ config :uniris, Uniris.BeaconChain.SlotTimer,
   # Trigger it 5 seconds before
   trigger_offset: 5
 
-config :uniris, Uniris.Networking, 
-  load_from_system_env: false,
-  ip_lookup_provider: Uniris.Networking.IPLookup.EnvImpl,
-  port: 3002
-
 config :uniris, Uniris.Bootstrap.Sync, out_of_sync_date_threshold: 60
-
-config :uniris, Uniris.P2P.BootstrappingSeeds,
-  # First node crypto seed is "node1"
-  seeds:
-    System.get_env(
-      "UNIRIS_P2P_SEEDS",
-      "127.0.0.1:3002:00682FF302BFA84702A00D81D5F97610E02573C0487FBCD6D00A66CCBC0E0656E8"
-    )
 
 config :uniris, Uniris.Bootstrap.NetworkInit,
   genesis_pools: [
@@ -101,9 +98,6 @@ config :uniris, Uniris.SharedSecrets.NodeRenewalScheduler,
   interval: "0 * * * * * *",
   # Trigger it 20 seconds before
   trigger_offset: 20
-
-config :uniris, Uniris.P2P.Endpoint,
-  port: System.get_env("UNIRIS_P2P_PORT", "3002") |> String.to_integer()
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

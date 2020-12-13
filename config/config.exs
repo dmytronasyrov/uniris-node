@@ -15,6 +15,10 @@ use Mix.Config
 #     ]
 #   ]
 
+config :uniris, Uniris.P2P,
+  nb_acceptors: 10,
+  transport: :tcp
+  
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$date $time $metadata[$level] $message\n",
@@ -51,12 +55,6 @@ config :uniris, Uniris.Bootstrap.NetworkInit,
   genesis_seed:
     <<226, 4, 212, 129, 254, 162, 178, 168, 206, 139, 176, 91, 179, 29, 83, 20, 50, 98, 0, 25,
       133, 242, 197, 73, 199, 53, 46, 127, 7, 223, 45, 246>>
-
-config :uniris, Uniris.P2P.BootstrappingSeeds, file: "priv/p2p/seeds"
-
-config :uniris, Uniris.P2P.Endpoint,
-  nb_acceptors: 10,
-  transport: :tcp
 
 # Configure the endpoint
 config :uniris, UnirisWeb.Endpoint,

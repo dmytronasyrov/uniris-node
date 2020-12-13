@@ -26,8 +26,7 @@ defmodule Uniris.SelfRepair.Sync do
       |> DateTime.from_unix!()
       |> Utils.truncate_datetime()
     else
-      :uniris
-      |> Application.get_env(__MODULE__)
+      Application.get_env(:uniris, __MODULE__)
       |> Keyword.fetch!(:network_startup_date)
     end
   end
@@ -49,15 +48,6 @@ defmodule Uniris.SelfRepair.Sync do
     Logger.info("Last sync date updated: #{DateTime.to_string(date)}")
   end
 
-  defp last_sync_file do
-    relative_filepath =
-      :uniris
-      |> Application.get_env(__MODULE__)
-      |> Keyword.get(:last_sync_file, "priv/p2p/last_sync")
-
-    Application.app_dir(:uniris, relative_filepath)
-  end
-
   @doc """
   Retrieve missing transactions from the missing beacon chain slots 
   since the last sync date provided
@@ -74,5 +64,14 @@ defmodule Uniris.SelfRepair.Sync do
     |> Stream.map(fn {subset, nodes} -> {subset, P2P.nearest_nodes(nodes, patch)} end)
     |> SlotFinder.get_beacon_slots(last_sync_date)
     |> SlotConsumer.handle_missing_slots(patch)
+  end
+
+  # Private
+
+  defp last_sync_file do
+    relative_filepath = Application.get_env(:uniris, __MODULE__)
+    |> Keyword.get(:last_sync_file, "priv/p2p/last_sync")
+
+    Application.app_dir(:uniris, relative_filepath)
   end
 end
