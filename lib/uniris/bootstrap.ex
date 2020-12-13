@@ -3,7 +3,6 @@ defmodule Uniris.Bootstrap do
   Manage Uniris Node Bootstrapping
   """
 
-  alias Uniris.Networking.IPLookup
   alias __MODULE__.NetworkInit
   alias __MODULE__.Sync
   alias __MODULE__.TransactionHandler
@@ -26,9 +25,8 @@ defmodule Uniris.Bootstrap do
   Start the bootstrapping as a task
   """
   @spec start_link(list()) :: {:ok, pid()}
-  def start_link(_args \\ []) do
-    {:ok, ip} = IPLookup.get_ip()
-    port = Application.get_env(:uniris, P2PEndpoint)[:port]
+  def start_link(ip: ip, port: port) do
+    IO.puts "AAAAA ARGS: #{inspect ip}   #{inspect port}"
     last_sync_date = SelfRepair.last_sync_date()
     bootstrapping_seeds = P2P.list_bootstrapping_seeds()
 

@@ -7,13 +7,15 @@ defmodule Uniris.Networking.IPLookup.IPIFYImpl do
 
   # TODO: move IP detection service into config
   @impl IPLookupImpl
-  @spec get_ip() :: {:ok, :inet.ip_address()}
-  def get_ip do
-    with {:ok, {_, _, inet_addr}} <- :httpc.request('http://api.ipify.org') do
+  @spec get_node_ip() :: {:ok, :inet.ip_address()} | {:error, binary}
+  def get_node_ip do
+    with {:ok, {_, _, inet_addr}} <- :httpc.request('http://api.ipify.org'),
+    {:ok, ip} <- :inet.parse_address(inet_addr) do
       :inets.stop()
-      :inet.parse_address(inet_addr)
+
+      {:ok, ip}
     else
-      err -> throw "Unable to locate IP address: #{inspect err}"
+      reason -> {:error, reason}
     end
   end
 end

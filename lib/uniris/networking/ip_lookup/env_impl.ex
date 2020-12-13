@@ -8,14 +8,14 @@ defmodule Uniris.Networking.IPLookup.EnvImpl do
   # Public
 
   @impl IPLookupImpl
-  @spec get_ip() :: {:ok, :inet.ip_address()}
-  def get_ip do
+  @spec get_node_ip() :: {:ok, :inet.ip_address()} | {:error, binary}
+  def get_node_ip do
     with host <- System.get_env("HOSTNAME"),
     chars <- String.to_charlist(host),
     {:ok, ip} <- :inet.parse_address(chars) do
       {:ok, ip}
     else
-      err -> raise "expected the HOSTNAME env variable to be set as IP address: #{inspect err}"
+      reason -> {:error, reason}
     end
   end
 end

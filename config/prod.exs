@@ -4,7 +4,10 @@ use Mix.Config
 config :logger, level: :info
 
 # config :uniris, Uniris.Networking, ip_lookup_provider: Uniris.Networking.IPLookup.IPIFYImpl
-config :uniris, Uniris.Networking, ip_lookup_provider: Uniris.Networking.IPLookup.EnvImpl
+config :uniris, Uniris.Networking, 
+  load_from_system_env: true,
+  ip_lookup_provider: Uniris.Networking.IPLookup.EnvImpl
+
 
 # config :uniris, Uniris.Bootstrap.Sync, out_of_sync_date_threshold: 54_000 # 15 days
 config :uniris, Uniris.Bootstrap.Sync, out_of_sync_date_threshold: 60

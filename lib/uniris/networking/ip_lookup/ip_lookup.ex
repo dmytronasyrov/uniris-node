@@ -8,8 +8,8 @@ defmodule Uniris.Networking.IPLookup do
   # Public
 
   @impl IPLookupImpl
-  @spec get_ip() :: {:ok, :inet.ip_address()}
-  def get_ip, do: impl().get_ip()
+  @spec get_node_ip() :: {:ok, :inet.ip_address()} | {:error, binary}
+  def get_node_ip, do: impl().get_node_ip()
 
   # Private
   

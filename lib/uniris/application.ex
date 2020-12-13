@@ -3,6 +3,8 @@ defmodule Uniris.Application do
 
   use Application
 
+  alias Uniris.Networking
+
   alias Uniris.Account.Supervisor, as: AccountSupervisor
   alias Uniris.BeaconChain.Supervisor, as: BeaconChainSupervisor
   alias Uniris.Bootstrap
@@ -23,6 +25,9 @@ defmodule Uniris.Application do
   alias UnirisWeb.Supervisor, as: WebSupervisor
 
   def start(_type, _args) do
+    {:ok, ip} = Networking.get_node_ip()
+    {:ok, port} = Networking.get_p2p_port()
+
     children = [
       {Registry, keys: :duplicate, name: Uniris.PubSubRegistry},
       DBSupervisor,
@@ -38,7 +43,7 @@ defmodule Uniris.Application do
       GovernanceSupervisor,
       SelfRepairSupervisor,
       WebSupervisor,
-      Bootstrap,
+      {Bootstrap, [ip: ip, port: port]},
       {Task.Supervisor, name: Uniris.TaskSupervisor}
     ]
 
