@@ -224,12 +224,12 @@ defmodule Uniris.Crypto do
     true
   """
   @spec node_public_key(index :: number()) :: Uniris.Crypto.key()
-  # defdelegate node_public_key(index), to: Keystore
-  def node_public_key(index) do
-    seed = get_crypto_seed()
-    IO.puts "QQQQ SEED: #{inspect seed}"
-    {pub, _} = derive_keypair(seed, index)
-    IO.puts "QQQQ PUB: #{inspect seed}"
+  defdelegate node_public_key(index), to: Keystore
+
+  def first_node_pk do
+    {pub, _} = get_crypto_seed()
+    |> derive_keypair(0)
+
     pub
   end
 

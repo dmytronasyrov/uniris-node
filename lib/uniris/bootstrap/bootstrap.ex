@@ -44,8 +44,10 @@ defmodule Uniris.Bootstrap do
   @spec run(:inet.ip_address(), :inet.port_number(), list(Node.t()), DateTime.t()) :: :ok
   def run(ip, port, bootstrapping_seeds, last_sync_date) do
     IO.puts "INIT BOOTSTRAP: #{inspect ip}:#{inspect port}"
+    first_node_pk = Crypto.first_node_pk()
+    IO.puts "INIT BOOTSTRAP FIRST NODE PK: #{inspect Base.encode16(first_node_pk)}"
 
-    should_bootstrap?(ip, port, last_sync_date)
+    should_bootstrap?(ip, port, last_sync_date, first_node_pk)
     |> case do
       true -> 
         IO.puts "SHOULD BOOTSTRAP"
@@ -53,12 +55,12 @@ defmodule Uniris.Bootstrap do
 
       false -> 
         IO.puts "SHOULD NOT BOOTSTRAP"
-        P2P.set_node_globally_available(Crypto.node_public_key(0))
+        P2P.set_node_globally_available(first_node_pk)
     end
   end
 
-  defp should_bootstrap?(ip, port, last_sync_date) do
-    already_bootstrapped? = match?({:ok, _}, P2P.get_node_info(Crypto.node_public_key(0)))
+  defp should_bootstrap?(ip, port, last_sync_date, first_node_pk) do
+    already_bootstrapped? = match?({:ok, _}, P2P.get_node_info(first_node_pk))
 
     if already_bootstrapped? do
       IO.puts "ALREADY BOOTSTRAPPED"
