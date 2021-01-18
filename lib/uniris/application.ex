@@ -2,6 +2,8 @@ defmodule Uniris.Application do
   @moduledoc false
 
   use Application
+  
+  require Logger
 
   alias Uniris.Account.Supervisor, as: AccountSupervisor
   alias Uniris.BeaconChain.Supervisor, as: BeaconChainSupervisor
@@ -43,7 +45,14 @@ defmodule Uniris.Application do
     ]
 
     opts = [strategy: :rest_for_one, name: Uniris.Supervisor]
-    Supervisor.start_link(Utils.configurable_children(children), opts)
+    res = Supervisor.start_link(Utils.configurable_children(children), opts)
+
+    Logger.debug "DEBUG: STARTING UNIRIS SYSTEM"
+    Logger.info "INFO: STARTING UNIRIS SYSTEM"
+    Logger.warn "WARN: STARTING UNIRIS SYSTEM"
+    Logger.error "ERROR: STARTING UNIRIS SYSTEM"
+
+    res
   end
 
   def config_change(changed, _new, removed) do

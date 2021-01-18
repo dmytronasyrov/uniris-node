@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentbit-ds
+  namespace: uniris-metrics
+  labels:
+    kubernetes.io/cluster-service: "true"
+    project: uniris
+spec:
+  selector:
+    matchLabels:
+      app: fluentbit
+  template:
+    metadata:
+      labels:
+        kubernetes.io/cluster-service: "true"
+        app: fluentbit
+    spec:
+      containers:
+        - name: fluentbit
+          image: fluent/fluent-bit:1.7.0-dev-8
+          command: ["/fluent-bit/bin/fluent-bit", "-c", "/fluent-bit/etc/fluent-bit.conf"]
+          ports:
+            - name: tcp-fb-server
+              containerPort: 2020
+              protocol: TCP
+            - name: tcp-fb-input
+              containerPort: 5170
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 500Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          volumeMounts:
+            - name: fluentbit-conf
+              subPath: fluent-bit.conf
+              mountPath: /fluent-bit/etc/fluent-bit.conf
+            - name: varlog
+              mountPath: /var/log
+      volumes:
+        - name: fluentbit-conf
+          configMap:
+            name: fluentbit-cm-v7
+            items:
+              - key: fluent-bit.conf
+                path: fluent-bit.conf
+        - name: varlog
+          hostPath:
+            path: /var/log

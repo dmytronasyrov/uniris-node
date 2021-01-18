@@ -1,0 +1,24 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: fluentbit-svc
+  namespace: uniris-metrics
+  labels:
+    project: uniris
+spec:
+  selector:
+    app: fluentbit
+  type: NodePort
+  ports:
+    - name: tcp-fb-server
+      protocol: TCP
+      port: 2020
+      targetPort: 2020
+      nodePort: 31020
+    - name: tcp-fb-input
+      protocol: TCP
+      port: 5170
+      targetPort: 5170
+      nodePort: 31170
+
+---

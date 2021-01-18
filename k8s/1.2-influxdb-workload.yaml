@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: influxdb-deploy
+  namespace: uniris-metrics
+  labels:
+    project: uniris
+    app: influxdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: influxdb
+  template:
+    metadata:
+      labels:
+        project: uniris
+        app: influxdb
+    spec:
+      serviceAccountName:
+      containers:
+        - name: influxdb
+          image: pharosproduction/influxdb:manual-3-prod
+          ports:
+            - name: tpc-influx
+              containerPort: 8086
+              protocol: TCP
+            - name: udp-statsd
+              containerPort: 8125
+              protocol: UDP
+            - name: http-influx-adm
+              containerPort: 8888
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+
+---

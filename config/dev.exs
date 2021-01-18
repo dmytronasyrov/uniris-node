@@ -1,6 +1,18 @@
 use Mix.Config
 
-# config :logger, handle_sasl_reports: true
+config :logger, :logger_fluentd_backend,
+  serializer: :json,
+  tag: "uniris",
+  level: :debug,
+  host: "192.168.64.6",
+  port: 31170
+
+config :logger,
+  backends: [ 
+    :console,
+    LoggerFluentdBackend.Logger
+  ],
+  level: :debug
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
@@ -62,7 +74,8 @@ config :uniris, Uniris.Crypto.Keystore, impl: Uniris.Crypto.SoftwareKeystore
 config :uniris, Uniris.Crypto.SoftwareKeystore,
   seed: System.get_env("UNIRIS_CRYPTO_SEED", "node1")
 
-config :uniris, Uniris.DB, impl: Uniris.DB.KeyValueImpl
+# config :uniris, Uniris.DB, impl: Uniris.DB.KeyValueImpl
+config :uniris, Uniris.DB, impl: Uniris.DB.CassandraImpl # REVERT
 
 config :uniris, Uniris.DB.KeyValueImpl,
   root_dir: "priv/storage/#{System.get_env("UNIRIS_CRYPTO_SEED", "node1")}"
